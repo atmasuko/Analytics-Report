@@ -1,0 +1,134 @@
+---
+title: "Nexo - Dados"
+author: "André Masuko"
+date: "8/3/2021"
+output: pdf_document
+---
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(readxl)
+library(knitr)
+
+nexo <- read_excel("nexo_visit1.xlsx")
+
+kable((nexo), "pipe", caption = " Estatísticas do Nexo (2015-2021) - Dados de Navegadores", align = rep('c', 8))
+
+nexo <- nexo [-c(11), ]
+nexo <- nexo %>% 
+  mutate(perc = paste0(sprintf("%4.1f", Usuários / sum(Usuários) * 100), "%"))
+
+ggplot(data = nexo) +
+  geom_bar(mapping = aes(x = reorder(Navegador, Usuários), y = Usuários), fill = "steelblue" ,stat = "identity") +
+  geom_text(mapping = aes(x = Navegador, y = Usuários, label = perc),  hjust = 0, size = 3,
+    inherit.aes = TRUE) +
+    scale_y_continuous(limits = c(NA, 15000)) +
+  labs(y = "Usuários", 
+       x = "",
+       caption = "Fonte: Google Analytics") +
+    theme_minimal() +
+  coord_flip() + 
+  ggtitle("Os navegadores mais utilizados no Nexo (2015-2021)")
+```
+
+
+## Insights - Navegadores
+
+O navegador mais utilizado pelos leitores do Nexo (incluindo assinantes e não assinantes) é, com ampla margem percentual, o **Google Chrome**. Este navegador engloba cerca de 69.3% de todas as pessoas que acessam o Nexo Jornal.
+
+Há, porém, em menor destaque, as pessoas que utilizam o navegador **Safari**, que representam aproximadamente 13.5% de nossos leitores.
+
+
+```{r, echo=FALSE}
+nexo <- read_excel("nexo_browser.xlsx")
+kable((nexo), "pipe", caption = " Estatísticas do Nexo (2015-2021) - Sistema Operacional", align = rep('c', 9))
+
+nexo <- nexo %>% 
+  mutate(perc = paste0(sprintf("%4.1f", Usuários / sum(Usuários) * 100), "%"))
+
+ggplot(data = nexo) +
+  geom_bar(mapping = aes(x = reorder(`Sistema operacional`, Usuários), y = Usuários), fill = "steelblue" ,stat = "identity") +
+  geom_text(mapping = aes(x = `Sistema operacional`, y = Usuários, label = perc),  hjust = 0, size = 3,
+    inherit.aes = TRUE) +
+    scale_y_continuous(limits = c(NA, 12000)) +
+  labs(y = "Usuários", 
+       x = "",
+       caption = "Fonte: Google Analytics") +
+  theme_minimal() +
+  coord_flip() + 
+  ggtitle("Sistemas Operacionais mais utilizados no Nexo (2015-2021)")
+```
+
+## Insights - Sistemas Operacionais
+
+O principal sistema operacional que os usuários do Nexo utilizam (tanto assinantes quanto não-assinantes) é o **Android**, com um percentual de usuários igual a 41%.
+
+Porém, é importante também ressaltar a predominância de dois sistemas que aparecem com destaque: **Windows** e **iOS**, cada um com um percentual de usuários igual a 34.7% e 15.2%, respectivamente.
+
+```{r, echo=FALSE}
+nexo <- read_excel("nexo_tela.xlsx")
+kable((nexo), "pipe", caption = " Estatísticas do Nexo (2015-2021) - Resolução de Tela", align = rep('c', 9))
+
+nexo <- nexo %>% 
+  mutate(perc = paste0(sprintf("%4.1f", Usuários / sum(Usuários) * 100), "%"))
+
+ggplot(data = nexo) +
+  geom_bar(mapping = aes(x = reorder(`Resolução de tela`, Usuários), y = Usuários), fill = "steelblue" ,stat = "identity") +
+  geom_text(mapping = aes(x = `Resolução de tela`, y = Usuários, label = perc),  hjust = 0, size = 3,
+    inherit.aes = TRUE) +
+    scale_y_continuous(limits = c(NA, 5000)) +
+  labs(y = "Usuários", 
+       x = "",
+       caption = "Fonte: Google Analytics") +
+  theme_minimal() +
+  coord_flip() + 
+  ggtitle("Resoluções de Tela mais utilizadas no Nexo (2015-2021)")
+
+```
+
+## Insights - Resolução de Tela
+
+A resolução de tela mais utilizada pelos leitores do Nexo é **1366 x 768**. Apesar disso, há uma distribuição relativamente uniforme entre as demais resoluções, com destaque para **1920 x 1980** e **360 x 640**, com um percentual de usuários igual a 11.3% e 10.4%, respectivamente.
+
+
+```{r, echo=FALSE}
+nexo <- read_excel("Nexo_visit.xlsx")
+
+ggplot(data = nexo) +
+  geom_line(mapping = aes(x = Índice, y = users), col = "blue" ,linetype = "dashed") + 
+  theme_minimal() + 
+  scale_x_continuous(limits = c(NA, 65)) +
+  ggtitle("Série Histórica de Usuários do Nexo (2016-2021)") +
+  labs(caption = "Fonte: Google Analytics",
+       x = "",
+       y = "Usuários")
+```
+
+## Insights
+
+A série histórica acima nos mostra uma tendência relativamente constante no número de usuários do Nexo Jornal. 
+
+No entanto, devemos dar atenção ao aumento súbito de usuários no meio de 2018, que coincidiu com o período das eleições presidenciais no Brasil. Isso nos mostra que os leitores tem interesses e incentivos significativos para acessar o Nexo em calendários eleitorais.
+
+Ademais, há um aumento significativo - mas não tão impactante quanto no período eleitoral - de usuários no instante temporal de eclosão da pandemia da covid-19 no Brasil, aproximadamente em fevereiro de 2020.
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+nexo <- nexo [-c(61), ]
+
+ggplot(data = nexo) +
+  geom_line(mapping = aes(x = Índice, y = users), col = "blue", linetype = "dotted") + 
+    geom_point(mapping = aes(x = Índice, y = users), shape = 21, col = "blue") +
+  geom_smooth(mapping = aes(x = Índice, y = users), col = "steelblue", method = "lm") + 
+  theme_minimal() + 
+  scale_x_continuous(limits = c(NA, 65)) +
+  ggtitle("Tendência Histórica de Usuários do Nexo (2016-2021)") +
+  labs(caption = "Fonte: Google Analytics",
+       x = "",
+       y = "Usuários",
+       subtitle = "A Reta Acompanha Regressão Linear Ajustada")
+```
+
+## Insights
+
+O gráfico acima apresenta o gráfico de tendência, com a regressão linear ajustada para a relação direta entre progressão do tempo e número de usuários do jornal. Através da reta, é possível constatar que *não há* um efeito significativo de aumento no número de usuários do Nexo Jornal ao longo do tempo, tendo este se mantido relativamente constante no longo prazo.
