@@ -1,0 +1,254 @@
+---
+title: "Relatório do Analytics - mês de setembro/2021"
+author: "Andre Masuko"
+date: "10/5/2021"
+output: pdf_document
+---
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(readxl)
+library(knitr)
+library(gridExtra)
+
+nexo <- read_excel("stat_nexo.xlsx")
+
+kable((nexo), "pipe", caption = "Estatísticas do Nexo (Setembro/2021): Dados de Navegadores", align = rep('c', 8))
+
+nexo <- nexo [-c(11),]
+nexo <- nexo %>%
+  mutate(perc = paste0(sprintf("%4.1f", Usuários / sum(Usuários) * 100), "%"))
+
+ggplot(data = nexo) +
+  geom_bar(mapping = aes(x = reorder(Navegador, Usuários), y = Usuários), fill = "steelblue", stat = "identity") +
+  geom_text(mapping = aes(x = Navegador, y = Usuários, label = perc),  hjust = 0, size = 3,
+    inherit.aes = TRUE) +
+  labs(y = "Percentual de Usuários", 
+       x = "",
+       caption = "Fonte: Google Analytics",
+       subtitle = "Dados: Setembro/2021") +
+    theme_minimal() +
+  theme(axis.text.x=element_blank(),
+        axis.ticks.x=element_blank()) +
+  coord_flip() + 
+  ggtitle("Gráfico 1: Navegadores mais utilizados pelos usuários") +
+  scale_y_continuous(limits = c(NA, 500000))
+  
+
+ggplot(data = nexo) +
+  geom_bar(mapping = aes(x = Navegador, y = Usuários, fill = Receita), stat = "identity") +
+  labs(x = "",
+       y = "Volume de Usuários",
+       caption = "Fonte: Google Analytics (Setembro/2021)",
+       subtitle = "Quanto mais clara a tonalidade da cor azul, maior a receita gerada") +
+  ggtitle("Gráfico 2: Volume de Usuários X Navegadores mais Lucrativos") +
+  theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+```
+
+
+## Insights - Navegadores
+
+O navegador mais utilizado pelos leitores do Nexo (incluindo assinantes e não assinantes) é, com ampla margem percentual, o **Google Chrome**. Este navegador engloba cerca de **70.0%** de todas as pessoas que acessam o Nexo Jornal, como mostra o gráfico 1.
+
+Há, porém, em menor destaque, as pessoas que utilizam o navegador **Safari**, que representam aproximadamente **13.6%** de nossos leitores, sendo este o segundo navegador mais utilizado.
+
+Por fim, o segundo gráfico mostra como o **Google Chrome**, além de ser o navegador mais utilizado por nossos usuários, é também aquele que gera **maior receita**, com elevada margem de diferença quando comparado aos demais navegadores. O **Safari**, em menor escala, é o segundo navegador de maior lucratividade para o jornal. Observa-se, portanto, que a quantidade de usuários e a receita gerada são dois aspectos fortemente correlacionados. 
+
+
+```{r, echo=FALSE}
+nexo <- read_excel("sistema_operacional2.xlsx")
+kable((nexo), "pipe", caption = " Estatísticas do Nexo (Setembro/2021) - Sistema Operacional", align = rep('c', 8))
+
+nexo <- nexo [-c(11),]
+
+nexo <- nexo %>% 
+  mutate(perc = paste0(sprintf("%4.1f", Usuários / sum(Usuários) * 100), "%"))
+
+ggplot(data = nexo) +
+  geom_bar(mapping = aes(x = reorder(`Sistema operacional`, Usuários), y = Usuários), fill = "dodgerblue2" , stat = "identity") +
+  geom_text(mapping = aes(x = `Sistema operacional`, y = Usuários, label = perc),  hjust = 0, size = 3,
+    inherit.aes = TRUE) +
+  labs(y = "Percentual de Usuários", 
+       x = "",
+       subtitle = "Dados: Setembro/2021",
+       caption = "Fonte: Google Analytics") +
+  theme_minimal() +
+  coord_flip() + 
+  ggtitle("Gráfico 3: Sistemas Operacionais mais utilizados no Nexo") +
+  scale_y_continuous(limits = c(NA, 300000)) +
+  theme(axis.text.x=element_blank(),
+        axis.ticks.x=element_blank()) 
+  
+
+ggplot(data = nexo) +
+  geom_bar(mapping = aes(x = reorder(`Sistema operacional`, Receita), y = Receita), fill = "dodgerblue2" , stat = "identity") +
+  labs(y = "Receita", 
+       x = "",
+       subtitle = "Dados: Setembro/2021",
+       caption = "Fonte: Google Analytics") +
+  theme_minimal() +
+  ggtitle("Gráfico 4: Sistemas Operacionais mais lucrativos no Nexo") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplot(data = nexo) +
+  geom_bar(mapping = aes(x = `Sistema operacional`, y = Usuários, fill = Receita), stat = "identity") +
+  labs(x = "",
+       y = "Volume de Usuários",
+       caption = "Fonte: Google Analytics (Setembro/2021)",
+       subtitle = "Quanto mais clara a tonalidade da cor azul, maior a receita gerada") +
+  ggtitle("Gráfico 5: Volume de Usuários X Sistemas mais Lucrativos") +
+  theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1), axis.text.y=element_blank(),
+        axis.ticks.y=element_blank()) 
+```
+
+## Insights - Sistemas Operacionais
+
+O sistema operacional preferido pelos usuários do Nexo (tanto assinantes quanto não-assinantes) é o **Android**, com um percentual de usuários igual a **47.8%**.
+
+Porém, é importante também ressaltar a predominância de dois sistemas que aparecem com destaque: **Windows** e **iOS**, cada um com um percentual de usuários igual a **29.1%** e **16.4%**, respectivamente.
+
+Essencial sublinhar que, embora o **Android** seja o sistema operacional mais utilizado pelos usuários do Nexo, aquele que origina a maior fonte de receita, como pode ser verificado nos gráficos 4 e 5, é o **Windows**, o segundo sistema mais utilizado pelos nossos usuários. 
+
+```{r, echo=FALSE}
+nexo <- read_excel("nexo_tela2.xlsx")
+kable((nexo), "pipe", caption = " Estatísticas do Nexo (Setembro/2021) - Resolução de Tela", align = rep('c', 8))
+
+nexo <- nexo [-c(11),]
+
+nexo <- nexo %>% 
+  mutate(perc = paste0(sprintf("%4.1f", Usuários / sum(Usuários) * 100), "%"))
+
+ggplot(data = nexo) +
+  geom_bar(mapping = aes(x = reorder(`Resolução de tela`, Usuários), y = Usuários), fill = "steelblue" , stat = "identity") +
+  geom_text(mapping = aes(x = `Resolução de tela`, y = Usuários, label = perc),  hjust = 0, size = 3,
+    inherit.aes = TRUE) +
+  labs(y = "Percentual de Usuários", 
+       x = "",
+       subtitle = "Dados: Setembro/2021",
+       caption = "Fonte: Google Analytics") +
+  theme_minimal() +
+  coord_flip() + 
+  ggtitle("Gráfico 6: Resoluções de Tela mais utilizadas no Nexo") +
+  theme(axis.text.x=element_blank(),
+        axis.ticks.x=element_blank()) +
+   scale_y_continuous(limits = c(NA, 100000))
+  
+```
+
+## Insights - Resolução de Tela
+
+A resolução de tela mais utilizada pelos leitores do Nexo durante o período analisado é **1366 x 768**. Apesar disso, há uma utilização considerável da resolução **360 x 640**. Mesmo assim, diferentemente da análise feita quanto aos navegadores, aqui as resoluções de tela apresentam uma distribuição relativamente uniforme, sem uma resolução única que se imponha sobre as demais. 
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, align = TRUE}
+nexo <- read_excel("visitantes.xlsx")
+
+nexo <- nexo [-c(31),]
+
+ggplot(data = nexo) +
+  geom_line(mapping = aes(x = Dia, y = Usuários), col = "blue" ,linetype = "dashed") + 
+  theme_minimal()  +
+  ggtitle("Gráfico 7: Série Histórica do Número de Usuários do Nexo") +
+  labs(caption = "Fonte: Google Analytics",
+       x = "",
+       subtitle = "Dados: Setembro/2021",
+       y = "Usuários")
+
+ggplot(data = nexo) +
+  geom_smooth(mapping = aes(x = Dia, y = Usuários), method = "lm" ,col = "dodgerblue3") +
+  geom_point(mapping = aes(x = Dia, y = Usuários), col = "steelblue", shape = 21) +
+  theme_minimal()  +
+  ggtitle("Gráfico 8: Série Histórica do Número de Usuários do Nexo (Setembro/21)") +
+  labs(caption = "Fonte: Google Analytics (Setembro/2021)",
+       x = "",
+       y = "Usuários",
+       subtitle = "A Reta Acompanha Regressão Linear Ajustada")
+
+nexo <- read_excel("visitors3.xlsx")
+
+ggplot(data = nexo) +
+  geom_line(mapping = aes(x = Dia, y = Usuários), col = "blue" ,linetype = "dashed") + 
+  theme_minimal()  +
+  ggtitle("Gráfico 9: Série Histórica de Usuários do Nexo") +
+  labs(caption = "Fonte: Google Analytics",
+       x = "",
+       subtitle = "Dados: Janeiro - Setembro/2021",
+       y = "Usuários")
+
+ggplot(data = nexo) +
+  geom_smooth(mapping = aes(x = Dia, y = Usuários), method = "lm" ,col = "dodgerblue3") +
+  geom_point(mapping = aes(x = Dia, y = Usuários), col = "steelblue", shape = 21) +
+  theme_minimal()  +
+  ggtitle("Gráfico 10: Série Histórica de Usuários do Nexo (Janeiro-Setembro/21)") +
+  labs(caption = "Fonte: Google Analytics",
+       x = "",
+       y = "Usuários",
+       subtitle = "A Reta Acompanha Regressão Linear Ajustada")
+
+b <- ggplot(data = nexo) +
+  geom_smooth(mapping = aes(x = Dia, y = Usuários), method = "lm" ,col = "dodgerblue3") +
+  geom_point(mapping = aes(x = Dia, y = Usuários), col = "steelblue", shape = 21) +
+  theme_minimal()  +
+  ggtitle("Evolução no Longo Prazo") +
+  labs(caption = "Fonte: Google Analytics",
+       x = "",
+       y = "Usuários",
+       subtitle = "Janeiro - Setembro/2021")
+
+
+nexo <- read_excel("visitantes.xlsx")
+nexo <- nexo [-c(31),]
+a <- ggplot(data = nexo) +
+  geom_smooth(mapping = aes(x = Dia, y = Usuários), method = "lm" ,col = "dodgerblue3") +
+  geom_point(mapping = aes(x = Dia, y = Usuários), col = "steelblue", shape = 21) +
+  theme_minimal()  +
+  ggtitle("Evolução no Curto Prazo") +
+  labs(caption = "Fonte: Google Analytics",
+       x = "",
+       y = "Usuários",
+       subtitle = "Evolução de Setembro/2021")
+
+grid.arrange(a,b, ncol = 2)
+
+```
+
+## Insights - Número de Usuários do Nexo Jornal
+
+O **gráfico 9** resume a distribuição histórica dos usuários do Nexo Jornal (tanto assinantes quanto não-assinantes) entre janeiro de 2021 e setembro do mesmo ano. Pode-se observar que, embora haja um pico de usuários em meados de abril (isso pode ser considerado um outlier, pois pode ser atribuído a um evento único que destoa da distribuição uniforme que predomina), a distribuição segue um padrão relativamente constante.
+
+No entanto, com a linha de tendência linear traçada no **gráfico 10**, pode-se observar que, entre janeiro e setembro de 2021, **o número de usuários do Nexo Jornal tem sofrido um decréscimo ao longo do tempo.**
+
+De todo modo, analisando somente o mês mais recente (setembro/2021), o **gráfico 8** destaca que houve um **aumento** no volume de usuários do Nexo neste mês em específico. Mesmo assim, analisando a conjuntura completa (desde janeiro até setembro de 2021), **o número de usuários  mostra uma tendência geral de queda, ainda que o mês de setembro tenha evidenciado um aumento de usuários.**
+
+```{r, echo=FALSE}
+nexo <- read_excel("geo_nexo.xlsx")
+
+kable((nexo), "pipe", caption = " Estatísticas do Nexo (Setembro/2021) - Localização dos Usuários", align = rep('c', 8))
+
+nexo <- nexo [-c(11),]
+
+nexo <- nexo %>% 
+  mutate(perc = paste0(sprintf("%4.1f", Usuários / sum(Usuários) * 100), "%"))
+
+ggplot(data = nexo) +
+  geom_bar(mapping = aes(x = reorder(País, Usuários), y = Usuários), fill = "dodgerblue2", stat = "identity") +
+  geom_text(mapping = aes(x = País, y = Usuários, label = perc),  hjust = 0, size = 3,
+    inherit.aes = TRUE) +
+  labs(y = "Percentual de Usuários", 
+       x = "",
+       subtitle = "Dados: Setembro/2021",
+       caption = "Fonte: Google Analytics") +
+  theme_minimal() +
+  coord_flip() + 
+  ggtitle("Gráfico 11: Localização dos Usuários do Nexo") +
+  scale_y_continuous(limits = c(NA, 600000)) +
+  theme(axis.text.x=element_blank(),
+        axis.ticks.x=element_blank()) 
+```
+
+## Insights - Localização dos Usuários
+
+O gráfico acima mostra que **93.4%** dos usuários do Nexo estão localizados no Brasil. Curioso notar que a Indonésia aparece na terceira posição, superando países lusófonos como Portugal.
